@@ -2,30 +2,21 @@ package application;
 	
 import javafx.application.Application;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 
 import gui.Bar;
+import gui.MainWindow;
+import func.WindowThread;
+import func.SyncObject;
 
 public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
-		primaryStage.setTitle("Pro Timer");
-		primaryStage.initStyle(StageStyle.UTILITY);
-		primaryStage.setResizable(false);
-		primaryStage.setOnCloseRequest(e -> System.exit(0));
+		MainWindow wind = new MainWindow();
+		wind.execStage(primaryStage);
 		
-		BorderPane bPane = new BorderPane();
-		VBox top = new VBox();
-		Bar bar = new Bar(primaryStage);
-		top.getChildren().addAll(bar.create());
-		bPane.setTop(top);
-		Scene sc = new Scene(bPane, 300, 200);
-		primaryStage.setScene(sc);
-		primaryStage.show();
+		
 	}
+	
 	
 	public static void main(String[] args) {
 		launch(args);

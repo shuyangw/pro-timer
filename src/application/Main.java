@@ -3,7 +3,6 @@ package application;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import gui.Bar;
 import gui.MainWindow;
 import func.WindowThread;
 import func.SyncObject;

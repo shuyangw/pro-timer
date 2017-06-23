@@ -8,19 +8,19 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import gui.NewTimerWindow;
-import func.SyncObject;
 
 public class Bar {
 	private MenuBar bar;
+	private MainWindow parent;
 	
-	public Bar(Stage primaryStage){
+	public Bar(Stage primaryStage, MainWindow parent){
 		this.bar = this.setup(primaryStage);
+		this.parent = parent;
 	}
 	
 	public MenuBar create(){
 		return bar;
 	}
-	
 	
 	private MenuBar setup(Stage primaryStage){
 		Menu file = new Menu("File");
@@ -28,14 +28,19 @@ public class Bar {
 		MenuItem newTimer = new MenuItem("New");
 		newTimer.setOnAction(e -> {
 			NewTimerWindow createNew = new NewTimerWindow(primaryStage);
-			createNew.getStage().setOnCloseRequest(new EventHandler<WindowEvent>(){
+			createNew.getStage().setOnHiding(new EventHandler<WindowEvent>(){
 				public void handle(WindowEvent evt){
-					
+					parent.receiveTime(createNew.getHours(), createNew.getMinutes());
+					createNew.exit();
 				}
 			});
 		});
+		MenuItem exit = new MenuItem("Exit");
+		exit.setOnAction(e -> {
+			System.exit(0);
+		});
 		
-		file.getItems().addAll(newTimer);
+		file.getItems().addAll(newTimer, exit);
 		return new MenuBar(file);
 	}
 }

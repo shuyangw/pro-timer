@@ -84,12 +84,16 @@ public class NewTimerWindow {
 				else if(!checkStringValidity(hoursField.getText()) || !checkStringValidity(minutesField.getText())){
 					raiseIllegalStringAlert();
 				}
-				else if(Integer.parseInt(minutesField.getText()) > 60){
+				else if(!minutesField.getText().isEmpty() && Integer.parseInt(minutesField.getText()) > 60){
 					raiseBadMinuteAlert();
 				}
 				else{
-					hours = Integer.parseInt(hoursField.getText());
-					minutes = Integer.parseInt(minutesField.getText());
+					if(!hoursField.getText().isEmpty()){
+						hours = Integer.parseInt(hoursField.getText());
+					}
+					if(!minutesField.getText().isEmpty()){
+						minutes = Integer.parseInt(minutesField.getText());
+					}
 					dialog.close();
 				}
 			}
@@ -140,5 +144,9 @@ public class NewTimerWindow {
 		alert.setHeaderText(null);
 		alert.setContentText("Please enter minutes less than 60");
 		alert.show();
+	}
+	
+	public void exit(){
+		dialog.close();
 	}
 }

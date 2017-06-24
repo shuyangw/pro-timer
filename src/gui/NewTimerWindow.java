@@ -1,7 +1,5 @@
 package gui;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -14,7 +12,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class NewTimerWindow {
-	private final int LEFT_OFFSET = 3;
+	private final int RIGHT_OFFSET = 3;
+	private final int LEFT_OFFSET = -15;
+	
 	private Stage dialog;
 	
 	private int hours;
@@ -51,7 +51,7 @@ public class NewTimerWindow {
 		
 		//Creates instruction label at top
 		Label instructions = new Label();
-		instructions.setTranslateX(LEFT_OFFSET);
+		instructions.setTranslateX(RIGHT_OFFSET);
 		instructions.setText("Enter time...");
 		GridPane.setConstraints(instructions, 0, 0);
 		grid.getChildren().add(instructions);
@@ -59,8 +59,8 @@ public class NewTimerWindow {
 		//Hours textfield
 		final TextField hoursField = new TextField();
 		Text hoursFieldText = new Text("Hours: ");
-		hoursFieldText.setTranslateX(LEFT_OFFSET);
-		hoursField.setTranslateX(-15);
+		hoursFieldText.setTranslateX(RIGHT_OFFSET);
+		hoursField.setTranslateX(LEFT_OFFSET);
 		GridPane.setConstraints(hoursFieldText, 0, 1);
 		GridPane.setConstraints(hoursField, 1, 1);
 		grid.getChildren().addAll(hoursField, hoursFieldText);
@@ -68,34 +68,32 @@ public class NewTimerWindow {
 		//Minutes textfield
 		final TextField minutesField = new TextField();
 		Text minutesFieldText = new Text("Minutes: ");
-		minutesFieldText.setTranslateX(LEFT_OFFSET);
-		minutesField.setTranslateX(-15);
+		minutesFieldText.setTranslateX(RIGHT_OFFSET);
+		minutesField.setTranslateX(LEFT_OFFSET);
 		GridPane.setConstraints(minutesFieldText, 0, 2);
 		GridPane.setConstraints(minutesField, 1, 2);
 		grid.getChildren().addAll(minutesField, minutesFieldText);
 		
 		//Define submit button
 		Button submit = new Button("Submit");
-		submit.setOnAction(new EventHandler<ActionEvent>(){
-			public void handle(ActionEvent evt){
-				if(hoursField.getText().isEmpty() && minutesField.getText().isEmpty()){
-					raiseNoTimeAlert();
+		submit.setOnAction(evt -> { 
+			if(hoursField.getText().isEmpty() && minutesField.getText().isEmpty()){
+				raiseNoTimeAlert();
+			}
+			else if(!checkStringValidity(hoursField.getText()) || !checkStringValidity(minutesField.getText())){
+				raiseIllegalStringAlert();
+			}
+			else if((int)(Math.log10(Integer.parseInt(hoursField.getText()))+1) > 2){
+				raiseBadHourAlert();
+			}
+			else{
+				if(!hoursField.getText().isEmpty()){
+					hours = Integer.parseInt(hoursField.getText());
 				}
-				else if(!checkStringValidity(hoursField.getText()) || !checkStringValidity(minutesField.getText())){
-					raiseIllegalStringAlert();
+				if(!minutesField.getText().isEmpty()){
+					minutes = Integer.parseInt(minutesField.getText());
 				}
-				else if(!minutesField.getText().isEmpty() && Integer.parseInt(minutesField.getText()) > 60){
-					raiseBadMinuteAlert();
-				}
-				else{
-					if(!hoursField.getText().isEmpty()){
-						hours = Integer.parseInt(hoursField.getText());
-					}
-					if(!minutesField.getText().isEmpty()){
-						minutes = Integer.parseInt(minutesField.getText());
-					}
-					dialog.close();
-				}
+				dialog.close();
 			}
 		});
 		GridPane.setConstraints(submit, 2, 1);
@@ -103,11 +101,9 @@ public class NewTimerWindow {
 		
 		//Define clear button
 		Button clear = new Button(" Clear  ");
-		clear.setOnAction(new EventHandler<ActionEvent>(){
-			public void handle(ActionEvent evt){
-				hoursField.clear();
-				minutesField.clear();
-			}
+		clear.setOnAction(evt -> {
+			hoursField.clear();
+			minutesField.clear();
 		});
 		GridPane.setConstraints(clear, 2, 2);
 		grid.getChildren().add(clear);
@@ -132,17 +128,17 @@ public class NewTimerWindow {
 		alert.show();
 	}
 	
+	private void raiseBadHourAlert(){
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setHeaderText(null);
+		alert.setContentText("Please enter a number of hours less than 100");
+		alert.show();
+	}
+	
 	private void raiseIllegalStringAlert(){
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setHeaderText(null);
 		alert.setContentText("Please enter a valid time");
-		alert.show();
-	}
-	
-	private void raiseBadMinuteAlert(){
-		Alert alert = new Alert(AlertType.WARNING);
-		alert.setHeaderText(null);
-		alert.setContentText("Please enter minutes less than 60");
 		alert.show();
 	}
 	

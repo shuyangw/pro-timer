@@ -1,11 +1,9 @@
 package gui;
 
-import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import gui.NewTimerWindow;
 
@@ -28,15 +26,13 @@ public class Bar {
 		MenuItem newTimer = new MenuItem("New");
 		newTimer.setOnAction(e -> {
 			NewTimerWindow createNew = new NewTimerWindow(primaryStage);
-			createNew.getStage().setOnHiding(new EventHandler<WindowEvent>(){
-				public void handle(WindowEvent evt){
-					parent.receiveTime(createNew.getHours(), createNew.getMinutes());
-					createNew.exit();
-				}
+			createNew.getStage().setOnHiding(evt -> {
+				parent.receiveTime(createNew.getHours(), createNew.getMinutes());
+				createNew.exit();
 			});
 		});
 		MenuItem exit = new MenuItem("Exit");
-		exit.setOnAction(e -> {
+		exit.setOnAction(evt -> {
 			System.exit(0);
 		});
 		

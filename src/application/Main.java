@@ -3,7 +3,7 @@ package application;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import func.WindowThread;
+import gui.MainWindow;
 
 public class Main extends Application implements Runnable{
 	public static void main(String[] args) {
@@ -12,8 +12,9 @@ public class Main extends Application implements Runnable{
 	
 	@Override
 	public void start(Stage primaryStage) throws InterruptedException {
-		WindowThread windThread = new WindowThread("Window Thread");
-		windThread.start(primaryStage);
+		
+		MainWindow wind = new MainWindow();
+		wind.execStage(primaryStage);
 		
 		@SuppressWarnings("unused")
 		Thread mainThread = Thread.currentThread();

@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -13,6 +14,8 @@ public class MainWindow {
 	
 	private Stage primaryStage;
 	private BorderPane bPane;
+	
+	private Timer time;
 	
 	public MainWindow(){
 		this.isBar = false;
@@ -43,14 +46,24 @@ public class MainWindow {
 		return bar;
 	}
 	
-	public void receiveTime(int hours, int minutes){
-		this.setupNewTimer(minutes%60, hours+minutes/60);
+	public void receiveTime(int seconds, int minutes, int hours){
+		this.setupNewTimer(seconds%60, minutes%60+seconds/60, hours+minutes/60);
 	}
 	
-	private void setupNewTimer(int minutes, int hours){
+	public void updateText(){
+		Platform.runLater(new Runnable(){
+			@Override
+			public void run() {
+				time.getText().setTranslateY(-20);
+				bPane.setCenter(time.getText());
+			}
+		});
+	}
+	
+	private void setupNewTimer(int seconds, int minutes, int hours){
 		//Setup timer text
-		Timer time = new Timer(minutes, hours);
-		time.getText().setFont(new Font("Digital", 72));
+		time = new Timer(hours, minutes, seconds, this, bPane);
+		time.getText().setFont(new Font("Digital", 48));
 		time.getText().setTranslateY(-20);
 		bPane.setCenter(time.getText());
 		
@@ -59,6 +72,7 @@ public class MainWindow {
 		start.setTranslateY(160);
 		Button pause = time.getButtons()[1];
 		pause.setTranslateY(160);
+		pause.setTranslateX(-7);
 		bPane.setLeft(start);
 		bPane.setRight(pause);
 	}

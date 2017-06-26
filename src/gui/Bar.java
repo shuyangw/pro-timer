@@ -1,5 +1,7 @@
 package gui;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -22,12 +24,14 @@ public class Bar {
 	
 	private MenuBar setup(Stage primaryStage){
 		Menu file = new Menu("File");
+		Menu help = new Menu("Help");
 		
+		//Defines file options
 		MenuItem newTimer = new MenuItem("New");
 		newTimer.setOnAction(e -> {
 			NewTimerWindow createNew = new NewTimerWindow(primaryStage);
 			createNew.getStage().setOnHiding(evt -> {
-				parent.receiveTime(createNew.getHours(), createNew.getMinutes());
+				parent.receiveTime(createNew.getHours(), createNew.getMinutes(), createNew.getSeconds());
 				createNew.exit();
 			});
 		});
@@ -36,7 +40,18 @@ public class Bar {
 			System.exit(0);
 		});
 		
+		//Defines help options
+		MenuItem helper = new MenuItem("Help");
+		helper.setOnAction(e -> {
+			Alert info = new Alert(AlertType.INFORMATION);
+			info.setHeaderText(null);
+			info.setContentText("Click on File->New, enter in how many hours, minutes and seconds you want to time"
+					+ " click submit, then click start to start the timer. Press pause to pause the timer.");
+			info.show();
+		});
+		
 		file.getItems().addAll(newTimer, exit);
-		return new MenuBar(file);
+		help.getItems().addAll(helper);
+		return new MenuBar(file, help);
 	}
 }

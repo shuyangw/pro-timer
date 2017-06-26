@@ -19,6 +19,7 @@ public class NewTimerWindow {
 	
 	private int hours;
 	private int minutes;
+	private int seconds;
 	
 	public NewTimerWindow(Stage primaryStage){
 		dialog = new Stage();
@@ -35,6 +36,10 @@ public class NewTimerWindow {
 	
 	public int getMinutes(){
 		return this.minutes;
+	}
+	
+	public int getSeconds(){
+		return this.seconds;
 	}
 	
 	private void prompt(Stage primaryStage){
@@ -74,16 +79,28 @@ public class NewTimerWindow {
 		GridPane.setConstraints(minutesField, 1, 2);
 		grid.getChildren().addAll(minutesField, minutesFieldText);
 		
+		//Seconds textfield
+		final TextField secondsField = new TextField();
+		Text secondsFieldText = new Text("Seconds: ");
+		secondsFieldText.setTranslateX(RIGHT_OFFSET);
+		secondsField.setTranslateX(LEFT_OFFSET);
+		GridPane.setConstraints(secondsFieldText, 0, 3);
+		GridPane.setConstraints(secondsField, 1, 3);
+		grid.getChildren().addAll(secondsField, secondsFieldText);
+		
 		//Define submit button
 		Button submit = new Button("Submit");
 		submit.setOnAction(evt -> { 
-			if(hoursField.getText().isEmpty() && minutesField.getText().isEmpty()){
+			if(hoursField.getText().isEmpty() && minutesField.getText().isEmpty() && secondsField.getText().isEmpty()){
 				raiseNoTimeAlert();
 			}
-			else if(!checkStringValidity(hoursField.getText()) || !checkStringValidity(minutesField.getText())){
+			else if(
+					!checkStringValidity(hoursField.getText()) || 
+					!checkStringValidity(minutesField.getText()) || 
+					!checkStringValidity(secondsField.getText())){
 				raiseIllegalStringAlert();
 			}
-			else if((int)(Math.log10(Integer.parseInt(hoursField.getText()))+1) > 2){
+			else if(!hoursField.getText().isEmpty() && (int)(Math.log10(Integer.parseInt(hoursField.getText()))+1) > 2){
 				raiseBadHourAlert();
 			}
 			else{
@@ -92,6 +109,9 @@ public class NewTimerWindow {
 				}
 				if(!minutesField.getText().isEmpty()){
 					minutes = Integer.parseInt(minutesField.getText());
+				}
+				if(!secondsField.getText().isEmpty()){
+					seconds = Integer.parseInt(secondsField.getText());
 				}
 				dialog.close();
 			}
@@ -104,6 +124,7 @@ public class NewTimerWindow {
 		clear.setOnAction(evt -> {
 			hoursField.clear();
 			minutesField.clear();
+			secondsField.clear();
 		});
 		GridPane.setConstraints(clear, 2, 2);
 		grid.getChildren().add(clear);

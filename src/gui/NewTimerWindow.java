@@ -11,37 +11,79 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+/**
+ * This class contains the mechanism to prompt the user to create a new Timer.
+ * A pop-up window is created in the form of a JavaFX stage with text-boxes in the form of
+ * JavaFX TextFields are created to prompt for hours/minutes/seconds inputs. Also sets up
+ * a submit button to submit the inputs and a clear button to clear the current inputs
+ * 
+ * @author 		Shuyang Wang
+ */
+
 public class NewTimerWindow {
+	/**
+	 * Private constant integers
+	 * <code>RIGHT_OFFSET</code> Defines the right shift in pixels for the text-box description text so they won't
+	 * be right on the edge of the screen.
+	 * <code>LEFT_OFFSET</code> Defines the left shift in pixels for text-boxes so they will be farther
+	 * away from the description text
+	 */
 	private final int RIGHT_OFFSET = 3;
 	private final int LEFT_OFFSET = -15;
 	
+	//The stage
 	private Stage dialog;
 	
 	private int hours;
 	private int minutes;
 	private int seconds;
 	
+	/**
+	 * Simple constructor, initializes the dialog then starts its setup
+	 * 
+	 * @param primaryStage		Stage of the main project
+	 */
 	public NewTimerWindow(Stage primaryStage){
 		dialog = new Stage();
 		this.prompt(primaryStage);
 	}
 	
+	/**
+	 * @return					the stage for the dialog
+	 */
 	public Stage getStage(){
 		return this.dialog;
 	}
 	
+	/**
+	 * The next three methods returns the hours, minutes and seconds of the input
+	 * 
+	 * @return					hours, minutes, seconds
+	 */
 	public int getHours(){
 		return this.hours;
 	}
-	
 	public int getMinutes(){
 		return this.minutes;
 	}
-	
 	public int getSeconds(){
 		return this.seconds;
 	}
 	
+	/**
+	 * This massive methods initializes the pop-up window for the user prompt, creates
+	 * the elements of the pop-up. Then shifts the elements accordingly so everything
+	 * looks nice. Specifically, the methods first creates a short instructions text,
+	 * then defines the three text boxes used for user input and then the submit and
+	 * clear buttons
+	 * 
+	 * When submit is pressed, it is necessary to examine each input to make sure each
+	 * input is valid, i.e., the hours must be a feasible number and each input must not
+	 * contain any non-integer values. Otherwise, warning messages which are defined
+	 * further down are presented to the user.
+	 * 
+	 * @param primaryStage		the main stage for the application
+	 */
 	private void prompt(Stage primaryStage){
 		//Removes minimize and restore buttons
 		dialog.initStyle(StageStyle.UTILITY);
@@ -56,6 +98,7 @@ public class NewTimerWindow {
 		
 		//Creates instruction label at top
 		Label instructions = new Label();
+		//Moves this right by 3 pixels so it won't be at the edge of the screen
 		instructions.setTranslateX(RIGHT_OFFSET);
 		instructions.setText("Enter time...");
 		GridPane.setConstraints(instructions, 0, 0);
@@ -64,8 +107,18 @@ public class NewTimerWindow {
 		//Hours textfield
 		final TextField hoursField = new TextField();
 		Text hoursFieldText = new Text("Hours: ");
+		//Moves this right by 3 pixels so it won't be at the edge of the screen
 		hoursFieldText.setTranslateX(RIGHT_OFFSET);
+		/*
+		 * Moves the actual text field left by 15 pixels so it will be closer to the text
+		 * These two movements are continued for the rest of the text prompts
+		 */
 		hoursField.setTranslateX(LEFT_OFFSET);
+		/*
+		 * Positions the description for the hours field and the actual field in accordance
+		 * with the grid pane
+		 * This is continued similarly for the other elements of the window
+		 */
 		GridPane.setConstraints(hoursFieldText, 0, 1);
 		GridPane.setConstraints(hoursField, 1, 1);
 		grid.getChildren().addAll(hoursField, hoursFieldText);
@@ -90,20 +143,26 @@ public class NewTimerWindow {
 		
 		//Define submit button
 		Button submit = new Button("Submit");
+		
+		//Activates when submit is pressed
 		submit.setOnAction(evt -> { 
+			//If all fields are empty, prompts a warning page telling the user that there is no input
 			if(hoursField.getText().isEmpty() && minutesField.getText().isEmpty() && secondsField.getText().isEmpty()){
 				raiseNoTimeAlert();
 			}
+			//If one field has an illegal input, specifically, runs if there is a non-integer element in the input, will prompt a warning			
 			else if(
 					!checkStringValidity(hoursField.getText()) || 
 					!checkStringValidity(minutesField.getText()) || 
 					!checkStringValidity(secondsField.getText())){
 				raiseIllegalStringAlert();
 			}
-			else if(!hoursField.getText().isEmpty() && (int)(Math.log10(Integer.parseInt(hoursField.getText()))+1) > 2){
+			//If the hours field has an input that is more than 2 digits large, will let the user know
+			else if(!hoursField.getText().isEmpty() && len(Integer.parseInt(hoursField.getText())) > 2){
 				raiseBadHourAlert();
 			}
 			else{
+				//Sets the hours/minutes/seconds fields to the inputs
 				if(!hoursField.getText().isEmpty()){
 					hours = Integer.parseInt(hoursField.getText());
 				}
@@ -122,6 +181,7 @@ public class NewTimerWindow {
 		//Define clear button
 		Button clear = new Button(" Clear  ");
 		clear.setOnAction(evt -> {
+			//Clears every text field in the window
 			hoursField.clear();
 			minutesField.clear();
 			secondsField.clear();
@@ -133,6 +193,14 @@ public class NewTimerWindow {
 		dialog.show();
 	}
 	
+	/**
+	 * Method that checks the validity of a string with respect to this program
+	 * 
+	 * @param str			An input string, specifically an input in the 
+	 *						text-box in the new timer prompt
+	 *						
+	 * @return				A boolean, indicating whether the string was valid or not
+	 */
 	private boolean checkStringValidity(String str){
 		for(int i = 0; i < str.length(); i++){
 			if(!Character.isDigit(str.charAt(i))){
@@ -142,6 +210,9 @@ public class NewTimerWindow {
 		return true;
 	}
 	
+	/**
+	 * Warns the user that there is no input when submit is pressed
+	 */
 	private void raiseNoTimeAlert(){
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setHeaderText(null);
@@ -149,6 +220,9 @@ public class NewTimerWindow {
 		alert.show();
 	}
 	
+	/**
+	 * Warns the user that the input hours is more than 2 digits
+	 */
 	private void raiseBadHourAlert(){
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setHeaderText(null);
@@ -156,6 +230,9 @@ public class NewTimerWindow {
 		alert.show();
 	}
 	
+	/**
+	 * Warns the user that there is an alphabetical element in the input string
+	 */
 	private void raiseIllegalStringAlert(){
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setHeaderText(null);
@@ -163,6 +240,19 @@ public class NewTimerWindow {
 		alert.show();
 	}
 	
+	/**
+	 *	Returns the length of an integer in digits
+	 * 
+	 * @param n			integer
+	 * @return			the length in digits
+	 */
+	private int len(int n){
+		return (int)(Math.log10(n)+1);
+	}
+	
+	/**
+	 * Closes the new timer window
+	 */
 	public void exit(){
 		dialog.close();
 	}
